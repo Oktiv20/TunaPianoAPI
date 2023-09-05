@@ -26,6 +26,6 @@ public class TunaPianoAPIDbContext : DbContext
         modelBuilder.Entity<Song>().HasData(new Song[]
         {
             new Song { SongId = 1, SongTitle = "The Silence", ArtistId = 2, SongAlbum = "A Black Mile to the Surface", SongLength = new TimeSpan(0, 6, 59) },
-        })
+        });
     }
 }
