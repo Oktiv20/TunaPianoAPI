@@ -49,12 +49,12 @@ app.MapGet("/tunapiano/songs", (TunaPianoAPIDbContext db) =>
 });
 
 
-app.MapGet("/tunapiano/songs/{songId}", (TunaPianoAPIDbContext db, int SongId) =>
+app.MapGet("/tunapiano/songs/{songId}", (TunaPianoAPIDbContext db, int songId) =>
 {
     Song song = db.Songs
     .Include(s => s.Genres)
     .Include(s => s.Artist)
-    .FirstOrDefault(s => s.SongId == SongId);
+    .FirstOrDefault(s => s.SongId == songId);
     if (song == null)
     {
         return Results.NotFound();
@@ -75,6 +75,22 @@ app.MapPost("/tunapiano/songs", (TunaPianoAPIDbContext db, Song song) =>
     {
         return Results.NotFound();
     }
+});
+
+
+app.MapPut("/tunapiano/songs/{songId}", (TunaPianoAPIDbContext db, int songId, Song song) =>
+{
+    Song updateSong = db.Songs.FirstOrDefault(s => s.SongId == songId);
+    if (updateSong == null)
+    {
+        return Results.NotFound();
+    }
+    updateSong.SongTitle = song.SongTitle;
+    updateSong.ArtistId = song.ArtistId;
+    updateSong.SongAlbum = song.SongAlbum;
+    updateSong.SongLength = song.SongLength;
+    db.Update(updateSong);
+    return Results.Ok(updateSong);
 });
 
 
