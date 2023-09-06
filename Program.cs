@@ -180,4 +180,73 @@ app.MapDelete("/tunapiano/artists/{artistId}", (TunaPianoAPIDbContext db, int ar
 });
 
 
+// GENRES
+
+
+app.MapGet("/tunapiano/genres", (TunaPianoAPIDbContext db) =>
+{
+    List<Genre> genres = db.Genres.ToList();
+    if (genres.Count == 0)
+    {
+        return Results.NotFound();
+    }
+
+    return Results.Ok(genres);
+});
+
+
+app.MapGet("/tunapiano/genres/{genreId}", (TunaPianoAPIDbContext db, int genreId) =>
+{
+    Genre genre = db.Genres
+    .Include(g => g.Songs)
+    .FirstOrDefault(a => a.GenreId == genreId);
+    if (genre == null)
+    {
+        return Results.NotFound();
+    }
+    return Results.Ok(genre);
+});
+
+
+app.MapPost("/tunapiano/genres", (TunaPianoAPIDbContext db, Genre genre) =>
+{
+    try
+    {
+        db.Add(genre);
+        db.SaveChanges();
+        return Results.Created($"/tunapiano/genres/{genre.GenreId}", genre);
+    }
+    catch (DbUpdateException)
+    {
+        return Results.NotFound();
+    }
+});
+
+
+app.MapPut("/tunapiano/genres/{genreId}", (TunaPianoAPIDbContext db, int genreId, Genre genre) =>
+{
+    Genre updateGenre = db.Genres.SingleOrDefault(g => g.GenreId == genreId);
+    if (updateGenre == null)
+    {
+        return Results.NotFound();
+    }
+    updateGenre.GenreDescription = genre.GenreDescription;
+    db.SaveChanges();
+    return Results.Ok(updateGenre);
+});
+
+
+app.MapDelete("/tunapiano/genres/{genreId}", (TunaPianoAPIDbContext db, int genreId) =>
+{
+    Genre deleteGenre = db.Genres.FirstOrDefault(g => g.GenreId == genreId);
+    if (deleteGenre == null)
+    {
+        return Results.NotFound();
+    }
+    db.Remove(deleteGenre);
+    db.SaveChanges();
+    return Results.Ok(deleteGenre);
+});
+
+
 app.Run();
