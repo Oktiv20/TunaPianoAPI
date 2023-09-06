@@ -1,7 +1,7 @@
-using TunaPianoAPI.Models;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using TunaPianoAPI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,5 +32,51 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+
+// SONGS
+
+
+app.MapGet("/tunapiano/songs", (TunaPianoAPIDbContext db) =>
+{
+    List<Song> songs = db.Songs.ToList();
+    if (songs.Count == 0)
+    {
+        return Results.NotFound();
+    }
+
+    return Results.Ok(songs);
+});
+
+
+app.MapGet("/tunapiano/songs/{songId}", (TunaPianoAPIDbContext db, int SongId) =>
+{
+    Song song = db.Songs
+    .Include(s => s.Genres)
+    .Include(s => s.Artist)
+    .FirstOrDefault(s => s.SongId == SongId);
+    if (song == null)
+    {
+        return Results.NotFound();
+    }
+    return Results.Ok(song);
+});
+
+
+app.MapPost("/tunapiano/songs", (TunaPianoAPIDbContext db, Song song) =>
+{
+    try
+    {
+        db.Add(song);
+        db.SaveChanges();
+        return Results.Created($"/tunapiano/songs/{song.SongId}", song);
+    }
+    catch (DbUpdateException)
+    {
+        return Results.NotFound();
+    }
+});
+
+
 
 app.Run();

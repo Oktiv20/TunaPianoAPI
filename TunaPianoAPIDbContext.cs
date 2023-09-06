@@ -14,6 +14,13 @@ public class TunaPianoAPIDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
+        modelBuilder.Entity<Song>()
+            .HasMany(g => g.Genres)
+            .WithMany(s => s.Songs)
+            .UsingEntity(sg => sg.ToTable("SongGenre"));
+
+
+
         modelBuilder.Entity<Artist>().HasData(new Artist[]
         {
             new Artist { ArtistId = 1, ArtistName = "Sturgill Simpson", ArtistAge = 45, ArtistBio = "John Sturgill Simpson is an American country music singer-songwriter and actor. " +
@@ -25,7 +32,18 @@ public class TunaPianoAPIDbContext : DbContext
 
         modelBuilder.Entity<Song>().HasData(new Song[]
         {
-            new Song { SongId = 1, SongTitle = "The Silence", ArtistId = 2, SongAlbum = "A Black Mile to the Surface", SongLength = new TimeSpan(0, 6, 59) },
+            new Song { SongId = 1, SongTitle = "Long White Line", ArtistId = 1, SongAlbum = "Metamodern Sounds in Country Music", SongLength = new TimeSpan(0, 4, 02) },
+
+            new Song { SongId = 2, SongTitle = "The Silence", ArtistId = 2, SongAlbum = "A Black Mile to the Surface", SongLength = new TimeSpan(0, 6, 59) },
+        });
+
+        modelBuilder.Entity<Genre>().HasData(new Genre[]
+        {
+            new Genre { GenreId = 1, GenreDescription = "Country" },
+
+            new Genre { GenreId = 2, GenreDescription = "Alternative" },
+
+            new Genre { GenreId = 3, GenreDescription = "Indie-Rock" },
         });
     }
 }
