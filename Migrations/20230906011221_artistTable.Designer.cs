@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace TunaPianoAPI.Migrations
 {
     [DbContext(typeof(TunaPianoAPIDbContext))]
-    partial class TunaPianoAPIDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230906011221_artistTable")]
+    partial class artistTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,15 +84,10 @@ namespace TunaPianoAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("GenreId"));
 
-                    b.Property<int?>("ArtistId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("GenreDescription")
                         .HasColumnType("text");
 
                     b.HasKey("GenreId");
-
-                    b.HasIndex("ArtistId");
 
                     b.ToTable("Genres");
 
@@ -172,13 +169,6 @@ namespace TunaPianoAPI.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TunaPianoAPI.Models.Genre", b =>
-                {
-                    b.HasOne("TunaPianoAPI.Models.Artist", null)
-                        .WithMany("Genres")
-                        .HasForeignKey("ArtistId");
-                });
-
             modelBuilder.Entity("TunaPianoAPI.Models.Song", b =>
                 {
                     b.HasOne("TunaPianoAPI.Models.Artist", "Artist")
@@ -192,8 +182,6 @@ namespace TunaPianoAPI.Migrations
 
             modelBuilder.Entity("TunaPianoAPI.Models.Artist", b =>
                 {
-                    b.Navigation("Genres");
-
                     b.Navigation("Songs");
                 });
 #pragma warning restore 612, 618

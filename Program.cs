@@ -108,4 +108,76 @@ app.MapDelete("/tunapiano/songs/{songId}", (TunaPianoAPIDbContext db, int songId
 
 
 
+// ARTISTS
+
+
+app.MapGet("/tunapiano/artists", (TunaPianoAPIDbContext db) =>
+{
+    List<Artist> artists = db.Artists.ToList();
+    if (artists.Count == 0)
+    {
+        return Results.NotFound();
+    }
+
+    return Results.Ok(artists);
+});
+
+
+app.MapGet("/tunapiano/artists/{artistId}", (TunaPianoAPIDbContext db, int artistId) =>
+{
+    Artist artist = db.Artists
+    .Include(a => a.Songs)
+    .ThenInclude(a => a.Genres)
+    .FirstOrDefault(a => a.ArtistId == artistId);
+    if (artist == null)
+    {
+        return Results.NotFound();
+    }
+    return Results.Ok(artist);
+});
+
+
+app.MapPost("/tunapiano/artists", (TunaPianoAPIDbContext db, Artist artist) =>
+{
+    try
+    {
+        db.Add(artist);
+        db.SaveChanges();
+        return Results.Created($"/tunapiano/artists/{artist.ArtistId}", artist);
+    }
+    catch (DbUpdateException)
+    {
+        return Results.NotFound();
+    }
+});
+
+
+app.MapPut("/tunapiano/artists/{artistId}", (TunaPianoAPIDbContext db, int artistId, Artist artist) =>
+{
+    Artist updateArtist = db.Artists.SingleOrDefault(a => a.ArtistId == artistId);
+    if (updateArtist == null)
+    {
+        return Results.NotFound();
+    }
+    updateArtist.ArtistName = artist.ArtistName;
+    updateArtist.ArtistAge = artist.ArtistAge;
+    updateArtist.ArtistBio = artist.ArtistBio;
+    db.SaveChanges();
+    return Results.Ok(updateArtist);
+});
+
+
+app.MapDelete("/tunapiano/artists/{artistId}", (TunaPianoAPIDbContext db, int artistId) =>
+{
+    Artist deleteArtist = db.Artists.FirstOrDefault(a => a.ArtistId == artistId);
+    if (deleteArtist == null)
+    {
+        return Results.NotFound();
+    }
+    db.Remove(deleteArtist);
+    db.SaveChanges();
+    return Results.Ok(deleteArtist);
+});
+
+
 app.Run();
