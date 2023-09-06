@@ -80,7 +80,7 @@ app.MapPost("/tunapiano/songs", (TunaPianoAPIDbContext db, Song song) =>
 
 app.MapPut("/tunapiano/songs/{songId}", (TunaPianoAPIDbContext db, int songId, Song song) =>
 {
-    Song updateSong = db.Songs.FirstOrDefault(s => s.SongId == songId);
+    Song updateSong = db.Songs.SingleOrDefault(s => s.SongId == songId);
     if (updateSong == null)
     {
         return Results.NotFound();
@@ -89,8 +89,21 @@ app.MapPut("/tunapiano/songs/{songId}", (TunaPianoAPIDbContext db, int songId, S
     updateSong.ArtistId = song.ArtistId;
     updateSong.SongAlbum = song.SongAlbum;
     updateSong.SongLength = song.SongLength;
-    db.Update(updateSong);
+    db.SaveChanges();
     return Results.Ok(updateSong);
+});
+
+
+app.MapDelete("/tunapiano/songs/{songId}", (TunaPianoAPIDbContext db, int songId) =>
+{
+    Song deleteSong = db.Songs.FirstOrDefault(s => s.SongId == songId);
+    if (deleteSong == null)
+    {
+        return Results.NotFound();
+    }
+    db.Remove(deleteSong);
+    db.SaveChanges();
+    return Results.Ok(deleteSong);
 });
 
 

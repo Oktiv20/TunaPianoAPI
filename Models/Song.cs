@@ -10,7 +10,7 @@ namespace TunaPianoAPI.Models
         public int ArtistId { get; set; }
         public Artist Artist { get; set; }
         public string? SongAlbum { get; set; }
-        public TimeSpan SongLength { get; set; }
+        public string? SongLength { get; set; }
         public ICollection<Genre>? Genres { get; set; }
     }
 }

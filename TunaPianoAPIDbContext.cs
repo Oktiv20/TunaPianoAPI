@@ -32,9 +32,9 @@ public class TunaPianoAPIDbContext : DbContext
 
         modelBuilder.Entity<Song>().HasData(new Song[]
         {
-            new Song { SongId = 1, SongTitle = "Long White Line", ArtistId = 1, SongAlbum = "Metamodern Sounds in Country Music", SongLength = new TimeSpan(0, 4, 02) },
+            new Song { SongId = 1, SongTitle = "Long White Line", ArtistId = 1, SongAlbum = "Metamodern Sounds in Country Music", SongLength = "4:02" },
 
-            new Song { SongId = 2, SongTitle = "The Silence", ArtistId = 2, SongAlbum = "A Black Mile to the Surface", SongLength = new TimeSpan(0, 6, 59) },
+            new Song { SongId = 2, SongTitle = "The Silence", ArtistId = 2, SongAlbum = "A Black Mile to the Surface", SongLength = "6:59" },
         });
 
         modelBuilder.Entity<Genre>().HasData(new Genre[]
